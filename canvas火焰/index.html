@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+
+  <style>
+    body {
+      margin: 0
+    }
+
+    canvas {
+      position: relative;
+      display: block;
+      z-index: 1;
+    }
+
+    .skull {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      margin: auto;
+      max-width: 35px;
+      /* background-image: url("/uploads/160501/skull-pv.png"); */
+      background-position: center center;
+      background-repeat: no-repeat;
+      background-size: contain;
+      z-index: 10;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="skull"></div>
+
+  <script>
+  var c = document.createElement('canvas'),
+      $ = c.getContext('2d'),
+      w = c.width = window.innerWidth,
+      h = c.height = window.innerHeight,
+      particles = [];
+
+    document.body.appendChild(c);
+
+    function randomColor() {
+      var r = 100 + Math.floor(Math.random() * 255),
+        g = Math.floor(Math.random() * 150),
+        b = Math.floor(Math.random() * 15);
+      return 'rgb(' + r + ',' + g + ',' + b + ')';
+    }
+
+    function particle() {
+      this.location = {
+        x: w / 2,
+        y: h / 2
+      };
+      this.speed = {
+        x: -1.5 + Math.random() * 3,
+        y: 1 + Math.random() * 5.5
+      };
+      this.life = 50;
+      this.radius = 1 + Math.floor(Math.random() * 25);
+      this.color = randomColor();
+      this.opacity = 1;
+      this.dead = false;
+      this.draw = function () {
+        $.globalCompositeOperation = 'lighter';
+        $.fillStyle = this.color;
+        $.beginPath();
+        $.arc(this.location.x, this.location.y, this.radius, 0, Math.PI * 2);
+        $.globalAlpha = this.opacity;
+        $.fill();
+        $.closePath();
+      };
+      this.update = function () {
+        if (this.location.x < 0 || this.life == 0 || this.opacity === 0 || this.radius < 1) {
+          this.dead = true;
+        }
+        if (!this.dead) {
+          this.location.x += this.speed.x;
+          this.location.y -= this.speed.y;
+          this.life--;
+          this.opacity -= 0.05;
+          this.radius--;
+        }
+      };
+    }
+
+    function stage() {
+      $.globalCompositeOperation = 'source-over';
+      $.fillStyle = 'rgba(0, 0, 0, 1)';
+      $.fillRect(0, 0, w, h);
+    }
+
+    function reset() {
+      w = c.width = window.innerWidth;
+      h = c.height = window.innerHeight;
+    }
+
+    function loop() {
+      stage();
+      var L = particles.length;
+      if (L < 100) {
+        particles.push(new particle());
+      }
+      for (var i = 0; i < L; i++) {
+        var p = particles[i];
+        p.draw();
+        p.update();
+        if (p.dead) {
+          particles[i] = new particle();
+        }
+      }
+      requestAnimationFrame(loop);
+    }
+
+    function init() {
+      reset();
+      loop();
+    }
+
+    window.addEventListener('resize', reset);
+
+    init();
+  </script>
+
+</body>
+
+</html>

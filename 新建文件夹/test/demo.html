@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+<!-- QQ强制全屏 -->
+  <meta name="x5-fullscreen" content="true">
+  <title>Document</title>
+
+  <style>
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .container {
+      position: relative;
+      max-width: 640px;
+      height: 100%;
+    }
+
+    img {
+      position: absolute;
+    }
+
+    .bg {
+      width: 100%;
+      /* height: 100%; */
+    }
+
+    .plane {
+      position: fixed;
+      width: 0.47rem;
+      height: 0.44rem;
+    }
+
+    .output {
+      position: fixed;
+      top: 20px;
+      right: 10px;
+      color: #fff;
+      font-size: 0.16rem;
+    }
+  </style>
+</head>
+
+<body>
+  <script>
+    ~ function anonymous(window) {
+      let computedREM = function computedREM() {
+        let winW = document.documentElement.clientWidth,
+          desW = 640;
+        if (winW >= desW) {
+          document.documentElement.style.fontSize = '100px';
+          return;
+        }
+        document.documentElement.style.fontSize = winW / desW * 100 + 'px';
+      };
+      computedREM();
+      window.addEventListener('resize', computedREM);
+    }(window);
+  </script>
+
+
+  <div class="container">
+    <img src="images/bg1.18539.jpg" class="bg" alt="">
+    <img src="images/bg2.18555.png" class="bg bg_1" alt="">
+    <img src="images/top.png" class="plane" alt="">
+    <pre class="output">
+
+    </pre>
+  </div>
+
+
+  <script>
+    var plane = document.querySelector('.plane');
+    /* var garden = document.querySelector('.garden');*/
+    var output = document.querySelector('.output');
+    console.log(output);
+
+
+    var maxX = document.documentElement.clientWidth - plane.clientWidth;
+    var maxY = document.documentElement.clientHeight - plane.clientHeight;
+
+    console.log(maxX, maxY);
+
+    function handleOrientation(event) {
+      var x = event.beta; // In degree in the range [-180,180]
+      var y = event.gamma; // In degree in the range [-90,90]
+
+
+      output.innerHTML = "beta : " + parseInt(x) + "\n";
+      output.innerHTML += "gamma: " + parseInt(y) + "\n";
+
+      // Because we don't want to have the device upside down
+      // We constrain the x value to the range [-90,90]
+      if (x > 90) {
+        x = 90
+      };
+      if (x < -90) {
+        x = -90
+      };
+
+      // To make computation easier we shift the range of 
+      // x and y to [0,180]
+      x += 90;
+      y += 45;
+      console.log(x, y);
+
+
+      valX = parseInt(maxY * x / 180);
+      valY = parseInt(maxX * y / 90);
+
+      valY = valY <= 0 ? 0 : (valY > maxX ? maxX : valY);
+
+      output.innerHTML += "top: " + valX + "\n";
+      output.innerHTML += "left: " + valY + "\n";
+
+      // 10 is half the size of the ball
+      // It center the positioning point to the center of the ball
+      plane.style.top = valX + "px";
+      plane.style.left = valY + "px";
+    }
+
+    window.addEventListener('deviceorientation', handleOrientation);
+  </script>
+
+</body>
+
+</html>

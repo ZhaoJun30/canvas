@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta http-equiv=Pragma content=no-cache>
+  <meta http-equiv=Cache-Control content=no-cache>
+  <title>Document</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <!--REM-->
+  <script>
+    ~ function anonymous(window) {
+      let computedREM = function computedREM() {
+        let winW = document.documentElement.clientWidth,
+          desW = 640;
+        if (winW >= desW) {
+          document.documentElement.style.fontSize = '100px';
+          return;
+        }
+        document.documentElement.style.fontSize = winW / desW * 100 + 'px';
+      };
+      computedREM();
+      window.addEventListener('resize', computedREM);
+    }(window);
+  </script>
+
+  <div class="loadBox" id="loadBox">
+    <div class="progress" id="loadText">0%</div>
+  </div>
+
+  <div class="container">
+    <div class="box1" id="box1"></div>
+    <div class="box2" id="box2"></div>
+    <div class="box3" id="box3"></div>
+    <div class="box4" id="box4"></div>
+    <div class="box5" id="box5"></div>
+    <div class="box6" id="box6"></div>
+    <div class="box7" id="box7"></div>
+    <div class="box8" id="box8"></div>
+    <div class="box9" id="box9"></div>
+  </div>
+
+  <script src="js/jquery-1.11.3.min.js"></script>
+
+  <script>
+    (function anonymous() {
+      let
+        imgData = ["img/Fhuo_00092.jpg", "img/huo_00088.jpg", "img/huo_00090.jpg", "img/huo_00091.jpg",
+          "img/huo_00093.jpg", "img/huo_00094.jpg", "img/huo_00095.jpg", "img/huo_00096.jpg", "img/huo_00097.jpg",
+          "img/huo_00098.jpg", "img/huo_00099.jpg", "img/huo_00100.jpg", "img/huo_00101.jpg", "img/huo_00102.jpg",
+          "img/huo_00103.jpg", "img/huo_00104.jpg", "img/huo_00105.jpg", "img/huo_00106.jpg", "img/huo_00107.jpg",
+          "img/huo_00108.jpg", "img/huo_00109.jpg", "img/huo_00110.jpg", "img/huo_00111.jpg", "img/huo_00112.jpg",
+          "img/huo_00113.jpg", "img/huo_00114.jpg", "img/huo_00115.jpg", "img/huo_00116.jpg", "img/huo_00117.jpg",
+          "img/huo_00118.jpg", "img/huo_00119.jpg", "img/huo_00120.jpg", "img/huo_00121.jpg", "img/huo_00122.jpg",
+          "img/huo_00123.jpg", "img/huo_00124.jpg", "img/huo_00125.jpg", "img/huo_00126.jpg", "img/huo_00127.jpg"
+        ];
+
+      let progress = 0,
+        text;
+
+      let loaded = function () {
+        imgData.forEach((item) => {
+          let tempImg = new Image();
+          tempImg.src = item;
+          tempImg.onload = function () {
+            progress++;
+            console.log(progress);
+
+            text = parseInt(progress / imgData.length * 100) + '%';
+            loadText.innerText = text;
+            tempImg = null;
+
+            if (progress === imgData.length) {
+              console.log('sdfsfs');
+              $(loadBox).hide();
+            }
+          }
+
+
+        });
+
+
+
+
+      };
+      loaded();
+
+
+
+    })()
+
+
+    window.onscroll = function () {
+      var topVal = document.documentElement.scrollTop || window.pageYOffset || document.body.scrollTop;
+
+      if (topVal < 30) {
+        box2.style.transform = 'translateY(' + topVal + 'px)';
+        box1.style.transform = 'translateY(' + -topVal + 'px)';
+      } else if (topVal > 150 && topVal < 200) {
+        console.log(21);
+
+        box3.style.transform = 'skew(' + (topVal - 150) + 'deg)';
+      }
+
+      if (topVal > 670 && topVal < 700) {
+        boxVal = (topVal - 670) * 0.5;
+        box4.style.transform = 'rotate(120deg) translate(' + boxVal + 'px)';
+        box5.style.transform = 'skew(-30deg) rotate(30deg) scale(' + (-boxVal / 30 + 1) + ')';
+        box6.style.transform = 'rotate(30deg) translate(' + boxVal + 'px)';
+        box7.style.transform = 'rotate(30deg) scale(0.9) translate(' + -boxVal + 'px)';
+        box8.style.background = 'rgba(' + (boxVal + 239) + ',' + (boxVal + 15) + ',' + (boxVal + 15) + ',' + (-
+          boxVal / 30 + 1) + ')';
+        box9.style.transform = 'rotate(130deg) translateY(' + boxVal * 2 + 'px)';
+      }
+
+    }
+  </script>
+
+</body>
+
+</html>

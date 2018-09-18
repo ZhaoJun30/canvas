@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+    }
+  </style>
+</head>
+
+<body>
+  <canvas id="canvas" style="background: #000000;display: block;"></canvas>
+
+  <script>
+    var canvas = document.getElementById('canvas');
+    var ctx=canvas.getContext('2d');
+
+    var w=document.documentElement.clientWidth;
+    var h=document.documentElement.clientHeight;
+
+    canvas.width=w;
+    canvas.height=h;
+
+
+  </script>
+</body>
+
+</html>
