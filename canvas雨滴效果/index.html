@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- canvas 相当于img,默认垂直对齐方式 -->
+  <canvas id="canvas" style="background: #000;display: block;">您的浏览器不支持canvas,请您更换浏览器！</canvas>
+
+  <script>
+    var canvas = document.getElementById('canvas');
+    var cxt = canvas.getContext('2d');
+
+    //获取浏览器窗口的宽高
+    var winW = canvas.width = document.documentElement.clientWidth;
+    var winH = canvas.height = document.documentElement.clientHeight;
+    var aRain = [];
+    //自适应浏览器窗口
+    window.onresize = function () {
+      var winW = canvas.width = document.documentElement.clientWidth;
+      var winH = canvas.height = document.documentElement.clientHeight;
+    };
+
+    //canvas绘制矩形
+    /* cxt.fillStyle = "red";
+    cxt.fillRect(100, 100, 100, 100);
+
+    //绘制圆形
+    cxt.arc(250, 250, 50, 0, Math.PI * 2, false);
+    cxt.strokeStyle = "#30b6eb";
+    cxt.stroke(); */
+
+    //动画
+    /* var y = 0;
+    setInterval(function () {
+      y++;
+      if (y > winH) {
+        y = 0;
+      }
+      cxt.clearRect(0, 0, winW, winH);
+      cxt.fillRect(100, y, 100, 100);
+    }, 16); */
+
+    //创建雨滴类
+    function Rain() {};
+
+    Rain.prototype = {
+      //雨滴初始位置
+      init: function () {
+        this.x = rand(0, winW);
+        this.y = 0;
+        this.vy = rand(3, 5);
+        this.height = rand(0.8 * winH, 0.9 * winH);
+        this.r = 2;
+        this.maxR = rand(30, 50);
+      },
+      //绘制雨滴
+      draw: function () {
+        if (this.y < this.height) {
+          cxt.fillStyle = "#30b6eb";
+          cxt.fillRect(this.x, this.y, 2, 7);
+        } else {
+          cxt.beginPath();
+          cxt.strokeStyle = "#30b6eb";
+          cxt.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+          cxt.stroke();
+        }
+      },
+      //更新坐标
+      update: function () {
+        if (this.y < this.height) {
+          this.y += this.vy;
+        } else {
+          if(this.r<this.maxR){
+            this.r++;
+          }else{
+            this.init();
+          }
+          
+        };
+        this.draw();
+      }
+    };
+
+    /*  var rain = new Rain();
+     rain.init();
+     setInterval(function () {
+       rain.draw();
+     }, 30); */
+
+
+    function rand(min, max) {
+      return Math.random() * (max - min) + min;
+    };
+
+    function createRain(num, time) {
+      for (let i = 0; i < num; i++) {
+        setTimeout(() => {
+          var rain = new Rain();
+          rain.init();
+          rain.draw();
+          aRain.push(rain);
+        }, time * i);
+      }
+    }
+
+    createRain(1000, 10);
+
+    setInterval(() => {
+      cxt.fillStyle = "rgba(0,0,0,0.3)";
+      cxt.fillRect(0, 0, winW, winH);
+      for (var item of aRain) {
+        item.update();
+      }
+    }, 1000 / 60);
+  </script>
+</body>
+
+</html>

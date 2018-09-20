@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>弹弹球粒子</title>
+  <style>
+    body {
+      margin: 0;
+    }
+  </style>
+</head>
+
+<body>
+  <canvas id="canvas" style="display: block;"></canvas>
+  <script>
+    let canvas = document.getElementById('canvas');
+    let w, h;
+    let aColor = ['#5ed5d1', '#ff6e97', '#199475', '#eb3f2f', '#869b75'];
+    let aBubble = [];
+    (function setSize() {
+      window.onresize = arguments.callee;
+      w = window.innerWidth;
+      h = window.innerHeight;
+      canvas.width = w;
+      canvas.height = h;
+    })();
+
+    let cxt = canvas.getContext('2d');
+    /* cxt.fillStyle='#fff';
+    cxt.arc(233,233,66,0,Math.PI*2);
+    cxt.fill();00 */
+
+    function random(min, max) {
+      return Math.random() * (max - min) + min;
+    }
+
+    function Bubble() {};
+
+    Bubble.prototype = {
+      init: function () {
+        this.x = random(0, w);
+        this.y = random(0, h);
+        this.color = aColor[Math.floor(random(0, 3))];
+        this.r = random(3, 5);
+        this.vx = random(-1, 1);
+        this.vy = random(-1, 1);
+      },
+      draw: function () {
+        cxt.beginPath();
+        cxt.fillStyle = this.color;
+        cxt.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+        cxt.fill();
+      },
+      move: function () {
+        if (this.x - this.r < 0 || this.x - this.r > w) {
+          this.vx = -this.vx;
+        }
+        if (this.y - this.r < 0 || this.y - this.r > h) {
+          this.vy = -this.vy;
+        }
+        this.x += this.vx;
+        this.y += this.vy;
+
+        this.draw();
+      }
+    };
+
+
+
+    function create(num) {
+      for (let i = 0; i < num; i++) {
+        let bubble = new Bubble();
+        bubble.init();
+        bubble.draw();
+        aBubble.push(bubble);
+      }
+    }
+    create(600);
+    setInterval(function () {
+      cxt.clearRect(0, 0, w, h);
+      for (const item of aBubble) {
+        item.move();
+      }
+    }, 1000 / 60)
+  </script>
+</body>
+
+</html>
