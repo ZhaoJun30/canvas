@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style type="text/css">
+    * {
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: #f2f2f2;
+    }
+
+    canvas {
+      display: block;
+    }
+  </style>
+
+</head>
+
+<body>
+  <canvas id="canvas"></canvas>
+
+  <script>
+    var canvas = document.getElementById("canvas"),
+      ctx = canvas.getContext('2d'),
+      w = document.documentElement.clientWidth,
+      h = document.documentElement.clientHeight;
+
+    canvas.width = w;
+    canvas.height = h;
+
+    var img = new Image();
+    //img.src = "img/qrcode.png";
+    img.src = "img/home_text.png";
+
+
+    img.onload = function () {
+      init()
+    }
+
+
+    var dotList = [];
+    var rafId = null,
+      finishCount = 0;
+
+    var imgW = img.width,
+      imgH = img.height,
+      sx = w / 2 - imgW / 2,
+      sy = h / 2 - imgH / 2,
+      dWidth = imgW / 2,
+      dHeight = imgH / 2,
+      dx = w / 2 - dWidth / 2,
+      dy = dHeight / 2;
+
+    function init() {
+
+      ctx.drawImage(img, 0, 0, imgW, imgH, dx, dy, dWidth, dHeight);
+
+      var imgData = ctx.getImageData(dx, dy, dWidth, dHeight);
+      //ctx.putImageData(imgData, 0, 0);
+
+      //console.log(imgData, imgData.data);
+
+      for (var x = 0; x < imgData.width; x++) {
+        for (var y = 0; y < imgData.height; y++) {
+          var i = (y * imgData.width + x) * 4;
+          if (imgData.data[i + 3] > 1) {
+            var r = imgData.data[i];
+            var g = imgData.data[i + 1];
+            var b = imgData.data[i + 2];
+            var a = imgData.data[i + 3] / 255;
+            var rgba = 'rgba(' + r + ',' + g + ',' + b + ',' + a + ')';
+            //console.log(rgba);
+
+            var dot = new Dot(x, y, rgba);
+            dotList.push(dot);
+          }
+        }
+      }
+      //console.log(dotList);
+      rafId=setInterval(draw,30);
+    }
+
+    // 缓动函数   t:当前时间   b:初始值  c:总位移 d:总时间
+    function easeInOutCubic(t, b, c, d) {
+      if ((t /= d / 2) < 1) return c / 2 * t * t * t + b;
+      return c / 2 * ((t -= 2) * t * t + 2) + b;
+    }
+    /* function easeInOutCubic(t, b, c, d) {
+      if ((t /= d / 2) < 1)
+        return c / 2 * t * t * t + b;
+      return c / 2 * ((t -= 2) * t * t + 2) + b;
+      //return c * t / d + b;
+    } */
+
+
+    function Dot(centerX, centerY, rgba) {
+      this.x = dx + centerX;
+      this.y = dy + centerY;
+      this.rgba = rgba;
+      this.frameNum = 0;
+      this.frameCount = Math.ceil(2000 / 16.66);
+      this.sx = w / 2;
+      this.sy = h - 50;
+      this.delay = this.frameCount * Math.random();
+      this.delayCount = 0;
+      this.speed = Math.random() * 5 + 2;
+    }
+
+
+
+    function draw() {
+      ctx.clearRect(0, 0, w, h);
+
+      var len = dotList.length,
+        curDot = null,
+        frameNum = 0,
+        frameCount = 0,
+        curX, curY;
+      finishCount = 0;
+      for (var i = 0; i < len; i++) {
+        curDot = dotList[i];
+        //console.log(curDot.rgba);
+
+        // 获取当前的time和持续时间和延时
+        frameNum = curDot.frameNum;
+        frameCount = curDot.frameCount;
+
+        /* if (curDot.delayCount < curDot.delay) {
+          curDot.delayCount += 1;
+          continue;
+        } */
+
+        ctx.save();
+        ctx.beginPath();
+
+        if (frameNum < frameCount) {
+          curX = easeInOutCubic(frameNum, curDot.sx, curDot.x - curDot.sx, curDot.frameCount);
+          curY = easeInOutCubic(frameNum,
+            curDot.sy, curDot.y - curDot.sy, curDot.frameCount);
+
+          ctx.fillStyle = curDot.rgba;
+          ctx.fillRect(curX, curY, 1, 1);
+          curDot.frameNum += curDot.speed;
+        } else {
+          ctx.fillStyle = curDot.rgba;
+          ctx.fillRect(curDot.x, curDot.y, 1, 1);
+          finishCount += 1;
+        }
+
+        ctx.restore();
+        //console.log(1);
+
+        if (finishCount >= len) {          
+          //cancelAnimationFrame(rafId);
+          clearInterval(rafId);
+          return;
+        }
+      }
+      //rafId = requestAnimationFrame(draw);
+    }
+  </script>
+
+</body>
+
+</html>
